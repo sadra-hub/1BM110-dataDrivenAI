@@ -42,7 +42,6 @@ The structure is intentionally assignment-based so that each folder keeps its ow
 │   ├── main.ipynb
 │   ├── knapsack_env.py
 │   └── instructions.pdf
-└── d
 ```
 
 ---
@@ -57,7 +56,6 @@ The structure is intentionally assignment-based so that each folder keeps its ow
 | `.gitignore` | Ignore rules for macOS artifacts, Python caches, notebook checkpoints, environments, and build outputs. |
 | `assignment 1/` | Materials related to the first assignment on energy prediction. |
 | `assignment 2/` | Materials related to the second assignment on reinforcement learning and knapsack optimization. |
-| `d` | Miscellaneous local file currently present in the repository root. |
 
 ### Assignment 1
 
@@ -168,4 +166,3 @@ Use it together with:
 - The repository currently mixes final deliverables and working files, which is practical for coursework and traceability.
 - Some experiment artifacts in Assignment 1 are generated files rather than hand-edited source files.
 - If this repository is later reused beyond coursework, adding a `requirements.txt` and a short reproducibility section would be the next useful cleanup.
-
