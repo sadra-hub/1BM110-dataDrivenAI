@@ -1,7 +1,8 @@
 # 1BM110 Data-driven Artificial Intelligence
 
 <p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Eindhoven_University_of_Technology_logo_new.png?20231008195526" alt="TU/e Logo" width="180" />
+  <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Eindhoven_University_of_Technology_logo_new.png" alt="TU/e Logo" width="180" />
+
 </p>
 
 <p align="center">
