@@ -1,0 +1,75 @@
+﻿python A2.py
+=== 1. Training with default hyperparameters ===
+
+=== 2. Hyperparameter tuning (one-at-a-time) ===
+
+--- DQN hyperparameter tuning ---
+      DQN learning_rate=1e-05 -> mean final reward = 556.00
+      DQN learning_rate=3e-05 -> mean final reward = 663.00
+      DQN learning_rate=0.0001 -> mean final reward = 930.67
+      DQN learning_rate=0.0003 -> mean final reward = 986.00
+      DQN learning_rate=0.001 -> mean final reward = 1130.33
+Best DQN learning rate: 0.001
+      DQN batch_size=16 -> mean final reward = 1061.00
+      DQN batch_size=32 -> mean final reward = 1053.67
+      DQN batch_size=64 -> mean final reward = 976.33
+      DQN batch_size=128 -> mean final reward = 1179.67
+      DQN batch_size=256 -> mean final reward = 1501.00
+Best DQN batch size: 256
+      DQN buffer_size=10000 -> mean final reward = 1428.00
+      DQN buffer_size=50000 -> mean final reward = 1194.00
+      DQN buffer_size=100000 -> mean final reward = 1442.33
+      DQN buffer_size=500000 -> mean final reward = 1442.33
+/opt/anaconda3/envs/instruction_4/lib/python3.11/site-packages/stable_baselines3/common/buffers.py:241: UserWarning: This system does not have apparently enough memory to store the complete replay buffer 9.66GB > 5.49GB
+    warnings.warn(
+/opt/anaconda3/envs/instruction_4/lib/python3.11/site-packages/stable_baselines3/common/buffers.py:241: UserWarning: This system does not have apparently enough memory to store the complete replay buffer 9.66GB > 5.82GB
+    warnings.warn(
+/opt/anaconda3/envs/instruction_4/lib/python3.11/site-packages/stable_baselines3/common/buffers.py:241: UserWarning: This system does not have apparently enough memory to store the complete replay buffer 9.66GB > 5.80GB
+    warnings.warn(
+      DQN buffer_size=1000000 -> mean final reward = 1442.33
+Best DQN buffer size: 100000
+      DQN exploration_initial_eps=1.0 -> mean final reward = 1442.33
+      DQN exploration_initial_eps=0.9 -> mean final reward = 1130.00
+      DQN exploration_initial_eps=0.5 -> mean final reward = 1008.67
+      DQN exploration_initial_eps=0.3 -> mean final reward = 1254.00
+      DQN exploration_initial_eps=0.1 -> mean final reward = 846.33
+
+Best DQN hyperparams: {'learning_rate': 0.001, 'buffer_size': 100000, 'batch_size': 256, 'exploration_fraction': 0.1, 'exploration_initial_eps': 1.0}
+
+--- PPO hyperparameter tuning ---
+      PPO learning_rate=1e-05 -> mean final reward = 608.33
+      PPO learning_rate=3e-05 -> mean final reward = 632.33
+      PPO learning_rate=0.0001 -> mean final reward = 611.33
+      PPO learning_rate=0.0003 -> mean final reward = 644.33
+      PPO learning_rate=0.001 -> mean final reward = 645.33
+Best PPO learning rate: 0.001
+      PPO batch_size=16 -> mean final reward = 375.33
+      PPO batch_size=32 -> mean final reward = 679.67
+      PPO batch_size=64 -> mean final reward = 645.33
+      PPO batch_size=128 -> mean final reward = 644.33
+      PPO batch_size=256 -> mean final reward = 657.33
+Best PPO batch size: 32
+      PPO n_steps=512 -> mean final reward = 668.00
+      PPO n_steps=1024 -> mean final reward = 841.67
+      PPO n_steps=2048 -> mean final reward = 688.00
+      PPO n_steps=4096 -> mean final reward = 636.33
+      PPO n_steps=8192 -> mean final reward = 595.33
+Best PPO n_steps: 1024
+      PPO clip_range=0.05 -> mean final reward = 604.00
+      PPO clip_range=0.1 -> mean final reward = 637.00
+      PPO clip_range=0.2 -> mean final reward = 631.67
+      PPO clip_range=0.3 -> mean final reward = 586.33
+      PPO clip_range=0.4 -> mean final reward = 673.33
+
+Best PPO hyperparams: {'learning_rate': 0.001, 'n_steps': 1024, 'batch_size': 32, 'n_epochs': 10, 'clip_range': 0.4}
+
+=== 3. Final training with tuned hyperparameters ===
+
+=== Final Results ===
+DQN default: mean final reward = 924.00 ± 104.53
+DQN tuned:    mean final reward = 925.33 ± 661.18
+PPO default: mean final reward = 690.33 ± 92.61
+PPO tuned:    mean final reward = 632.67 ± 95.73
+
+All done. Figures saved to ./figures/
+(instruction_4) tijn@MacBookPro 1BM110_A2 % 
