@@ -26,13 +26,13 @@ Both DQN and PPO were first trained using default hyperparameters.
 
 ![Default Comparison](../figures/part2_default_comparison.png)
 
-The results show that DQN exhibits high variance and unstable performance across different seeds. PPO, while also showing variability, demonstrates slightly more consistent behavior.
+The findings indicate that DQN has a large variance and poor consistency in performance with various seeds. Although PPO is also variative, it has a more consistent behavior.
 
 ---
 
 ### Results with Tuned Hyperparameters
 
-Hyperparameter tuning was performed for both models by testing multiple values for key parameters such as learning rate and training steps.
+Both of these models were hyperparameter tuned by experimenting with several values of both learning rate and training steps.
 
 ![Tuned Comparison](../figures/part2_tuned_comparison.png)
 
@@ -60,7 +60,7 @@ PPO demonstrates more stable learning compared to DQN. Tuning improves its perfo
 
 ### Conclusion
 
-Overall, PPO outperforms DQN in terms of stability and consistency. While DQN can reach competitive rewards, its high variance makes it less reliable. PPO provides more robust performance across different seeds and configurations.
+In general, PPO has a higher degree of stability and consistency when compared to DQN. Although DQN is able to achieve competitive rewards, it is less reliable due to its large variance. PPO has stronger performance with the various seeds and configurations.
 
 ---
 
@@ -68,7 +68,7 @@ Overall, PPO outperforms DQN in terms of stability and consistency. While DQN ca
 
 ### Approach
 
-In this part, invalid action masking is applied to prevent the agent from selecting infeasible actions. The environment provides a mask that filters out invalid actions, and a MaskablePPO agent is trained using this information.
+In this section invalid action masking is used to avoid infeasible actions being chosen by the agent. The environment gives a mask which filters out invalid actions and a MaskablePPO agent is then trained on such information.
 
 ---
 
@@ -86,7 +86,7 @@ Applying masking with the PPO tuned hyperparameters already leads to a significa
 
 ![Masked Tuned](../figures/part3_masked_tuned.png)
 
-Further tuning of masked PPO hyperparameters does not significantly improve performance and may even increase variance. This suggests that the initial masked configuration was already effective.
+Additional optimization of masked PPO hyperparameters will not have a significant positive effect on the performance, and it can even boost the variance. This implies that the original masked mask was already working.
 
 ---
 
