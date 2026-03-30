@@ -1,0 +1,28 @@
+{
+  "os": "Linux-5.15.0-164-generic-x86_64-with-glibc2.35",
+  "python": "CPython 3.10.12",
+  "startedAt": "2026-03-30T06:31:45.081341Z",
+  "program": "/root/1BM110-dataDrivenAI/assignment 2/Group02_1BM110_A2_part2.py",
+  "codePath": "assignment 2/Group02_1BM110_A2_part2.py",
+  "codePathLocal": "Group02_1BM110_A2_part2.py",
+  "git": {
+    "remote": "https://github.com/sadra-hub/1BM110-dataDrivenAI.git",
+    "commit": "4f5155d475b08b83dce02d9c28626484e6f59b1e"
+  },
+  "email": "sadra.moosavilar@gmail.com",
+  "root": "/root/1BM110-dataDrivenAI/assignment 2",
+  "host": "n8n1671onubuntu2204lts-s-1vcpu-1gb-ams3-01",
+  "executable": "/root/1BM110-dataDrivenAI/assignment 2/venv/bin/python",
+  "cpu_count": 2,
+  "cpu_count_logical": 2,
+  "disk": {
+    "/": {
+      "total": "25821052928",
+      "used": "18766098432"
+    }
+  },
+  "memory": {
+    "total": "4101836800"
+  },
+  "writerId": "j25u63mqq99fc5w8x66uj8xdk9rdye7j"
+}

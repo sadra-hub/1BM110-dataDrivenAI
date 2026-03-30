@@ -1,0 +1,1 @@
+{"columns": ["hyperparameter", "candidate", "mean_reward", "std_reward"], "data": [["clip_range", "0.05", 186.33333333333334, 99.06339160131535], ["clip_range", "0.1", 186.33333333333334, 99.06339160131535], ["clip_range", "0.2", 287.3333333333333, 72.55955408413759]]}

@@ -1,0 +1,75 @@
+_wandb:
+    value:
+        cli_version: 0.25.1
+        code_path: code/assignment 2/Group02_1BM110_A2_part2.py
+        e:
+            7xbgi76117a2p1w7t1dayr6a2fvbcsdj:
+                codePath: assignment 2/Group02_1BM110_A2_part2.py
+                codePathLocal: Group02_1BM110_A2_part2.py
+                cpu_count: 2
+                cpu_count_logical: 2
+                disk:
+                    /:
+                        total: "25821052928"
+                        used: "18764857344"
+                email: sadra.moosavilar@gmail.com
+                executable: /root/1BM110-dataDrivenAI/assignment 2/venv/bin/python
+                git:
+                    commit: f2abde7a3025dbbfe366bad387ca7fed6f8bf6a8
+                    remote: https://github.com/sadra-hub/1BM110-dataDrivenAI.git
+                host: n8n1671onubuntu2204lts-s-1vcpu-1gb-ams3-01
+                memory:
+                    total: "4101836800"
+                os: Linux-5.15.0-164-generic-x86_64-with-glibc2.35
+                program: /root/1BM110-dataDrivenAI/assignment 2/Group02_1BM110_A2_part2.py
+                python: CPython 3.10.12
+                root: /root/1BM110-dataDrivenAI/assignment 2
+                startedAt: "2026-03-30T06:24:47.451767Z"
+                writerId: 7xbgi76117a2p1w7t1dayr6a2fvbcsdj
+        m:
+            - "1": global_step
+              "6":
+                - 3
+              "7": []
+            - "2": '*'
+              "5": 1
+              "6":
+                - 1
+              "7": []
+        python_version: 3.10.12
+        t:
+            "1":
+                - 1
+            "2":
+                - 1
+            "3":
+                - 7
+                - 13
+                - 15
+                - 16
+            "4": 3.10.12
+            "5": 0.25.1
+            "12": 0.25.1
+            "13": linux-x86_64
+env:
+    value:
+        max_weight: 200
+        n_items: 200
+        randomize_params_on_reset: false
+eval_freq:
+    value: 2000
+n_eval_episodes:
+    value: 5
+seeds:
+    value:
+        - 42
+        - 123
+        - 456
+total_timesteps:
+    value: 20000
+wandb_entity:
+    value: null
+wandb_mode:
+    value: online
+wandb_project:
+    value: assignment-2-bounded-knapsack
