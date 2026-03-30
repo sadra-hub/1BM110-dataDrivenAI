@@ -40,7 +40,7 @@ EXPERIMENT_CONFIG = {
         "max_weight": 200,
         "randomize_params_on_reset": False,
     },
-    "total_timesteps": 20_000,
+    "total_timesteps": 50_000,
     "eval_freq": 2_000,
     "n_eval_episodes": 5,
     "seeds": [42, 123, 456],
