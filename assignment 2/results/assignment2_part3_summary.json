@@ -1,0 +1,113 @@
+{
+  "experiment_config": {
+    "env": {
+      "n_items": 200,
+      "max_weight": 200,
+      "randomize_params_on_reset": false
+    },
+    "total_timesteps": 10000,
+    "eval_freq": 2000,
+    "n_eval_episodes": 5,
+    "seeds": [
+      21,
+      31,
+      41
+    ],
+    "wandb_project": "assignment-2-bounded-knapsack",
+    "wandb_entity": null,
+    "wandb_mode": "online"
+  },
+  "final_summary": {
+    "part2_best_ppo_params": {
+      "learning_rate": 0.0001,
+      "n_steps": 512,
+      "batch_size": 32,
+      "n_epochs": 5,
+      "clip_range": 0.2,
+      "gamma": 0.95
+    },
+    "part2_tuned_ppo_summary": {
+      "final_mean_reward": 228.66666666666666,
+      "final_std_reward": 155.0426464629078
+    },
+    "masked_base": {
+      "final_mean_reward": 627.3333333333334,
+      "final_std_reward": 23.098821518760545
+    },
+    "best_masked_params": {
+      "learning_rate": 0.0001,
+      "n_steps": 128,
+      "batch_size": 32,
+      "n_epochs": 5,
+      "clip_range": 0.2,
+      "gamma": 0.95,
+      "ent_coef": 0.005
+    },
+    "masked_tuned": {
+      "final_mean_reward": 593.3333333333334,
+      "final_std_reward": 192.66782006575176
+    }
+  },
+  "masked_tuning": {
+    "learning_rate": [
+      {
+        "hyperparameter": "learning_rate",
+        "candidate": 0.0001,
+        "mean_reward": 617.0,
+        "std_reward": 37.06750598570132
+      },
+      {
+        "hyperparameter": "learning_rate",
+        "candidate": 0.0003,
+        "mean_reward": 591.3333333333334,
+        "std_reward": 290.99408165039296
+      },
+      {
+        "hyperparameter": "learning_rate",
+        "candidate": 0.001,
+        "mean_reward": 546.3333333333334,
+        "std_reward": 264.53145160621034
+      }
+    ],
+    "n_steps": [
+      {
+        "hyperparameter": "n_steps",
+        "candidate": 128,
+        "mean_reward": 561.6666666666665,
+        "std_reward": 262.82609374937545
+      },
+      {
+        "hyperparameter": "n_steps",
+        "candidate": 256,
+        "mean_reward": 452.6666666666667,
+        "std_reward": 121.35439377661156
+      },
+      {
+        "hyperparameter": "n_steps",
+        "candidate": 512,
+        "mean_reward": 438.3333333333333,
+        "std_reward": 288.8625201641009
+      }
+    ],
+    "ent_coef": [
+      {
+        "hyperparameter": "ent_coef",
+        "candidate": 0.0,
+        "mean_reward": 561.6666666666665,
+        "std_reward": 262.82609374937545
+      },
+      {
+        "hyperparameter": "ent_coef",
+        "candidate": 0.005,
+        "mean_reward": 593.3333333333334,
+        "std_reward": 192.66782006575176
+      },
+      {
+        "hyperparameter": "ent_coef",
+        "candidate": 0.01,
+        "mean_reward": 583.3333333333334,
+        "std_reward": 170.3258315373475
+      }
+    ]
+  }
+}
