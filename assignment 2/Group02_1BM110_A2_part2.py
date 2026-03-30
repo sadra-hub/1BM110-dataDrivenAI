@@ -97,7 +97,7 @@ def init_wandb_run(name: str, group: str, config: Dict[str, Any], tags: List[str
             group=group,
             tags=tags,
             config=config,
-            finish_previous=True,
+            reinit="finish_previous",
             save_code=True,
         )
         wandb.define_metric("global_step")
@@ -113,7 +113,7 @@ def init_wandb_run(name: str, group: str, config: Dict[str, Any], tags: List[str
             group=group,
             tags=tags,
             config=config,
-            finish_previous=True,
+            reinit="finish_previous",
             save_code=False,
         )
         wandb.define_metric("global_step")
