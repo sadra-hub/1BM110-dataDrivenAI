@@ -44,9 +44,9 @@ EXPERIMENT_CONFIG = {
     "eval_freq": 1_000,
     "n_eval_episodes": 10,
     "seeds": [42, 123, 456],
-    "wandb_project": os.getenv("WANDB_PROJECT", "assignment-2-bounded-knapsack"),
-    "wandb_entity": os.getenv("WANDB_ENTITY"),
-    "wandb_mode": os.getenv("WANDB_MODE", "online"),
+    "wandb_project": "assignment-2-bounded-knapsack",
+    "wandb_entity": None,
+    "wandb_mode": "online",
 }
 
 DEFAULT_DQN = {
