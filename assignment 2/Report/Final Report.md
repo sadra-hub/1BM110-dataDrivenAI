@@ -94,12 +94,12 @@ Additional optimization of masked PPO hyperparameters will not have a significan
 
 ![Part 3 Comparison](../figures/part3_comparison.png)
 
-The comparison clearly shows that Masked PPO significantly outperforms standard PPO. The mean reward is substantially higher, and the learning process is more stable.
+It is evident in the comparison that Masked PPO does far better than the standard PPO. It has a significantly higher mean reward and the process of learning is more stable.
 
 ---
 
 ### Conclusion
 
-Invalid action masking greatly improves the learning efficiency of the agent by reducing the action space to only valid choices. This leads to higher rewards and more stable performance.
+The masking of invalid actions significantly increases the efficiency with which the agent learns, since the action space is narrowed to the valid actions only. This increases the rewards and more consistent performance.
 
-Interestingly, additional hyperparameter tuning does not provide major improvements, indicating that masking itself is the dominant factor in performance gains.
+Surprisingly, further hyperparameter optimization does not give significant performance increases, suggesting that masking as such is the primary determinant of performance increases.
