@@ -67,16 +67,16 @@ DEFAULT_PPO = {
 
 PART2_SEARCH_SPACE = {
     "DQN": {
-        "learning_rate": [1e-5, 3e-5, 1e-4, 3e-4, 1e-3],
-        "gamma": [0.90, 0.95, 0.97, 0.99, 0.995],
-        "buffer_size": [2_000, 5_000, 10_000, 25_000, 50_000],
-        "exploration_initial_eps": [1.0, 0.9, 0.5, 0.3, 0.1],
+        "learning_rate": [1e-5, 3e-5, 1e-4],
+        "gamma": [0.90, 0.95, 0.97],
+        "buffer_size": [2_000, 5_000, 10_000],
+        "exploration_initial_eps": [1.0, 0.9, 0.5],
     },
     "PPO": {
-        "learning_rate": [1e-5, 3e-5, 1e-4, 3e-4, 1e-3],
-        "gamma": [0.90, 0.95, 0.97, 0.99, 0.995],
-        "n_steps": [128, 256, 512, 1024, 2048],
-        "clip_range": [0.05, 0.1, 0.2, 0.3, 0.4],
+        "learning_rate": [1e-5, 3e-5, 1e-4],
+        "gamma": [0.90, 0.95, 0.97],
+        "n_steps": [128, 256, 512],
+        "clip_range": [0.05, 0.1, 0.2],
     },
 }
 
