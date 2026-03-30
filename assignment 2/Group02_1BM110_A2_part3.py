@@ -69,7 +69,7 @@ MASKED_PPO_GRID = {
 
 def init_wandb_run(name: str, group: str, config: Dict[str, Any], tags: List[str]) -> Any:
     try:
-        return wandb.init(
+        run = wandb.init(
             project=EXPERIMENT_CONFIG["wandb_project"],
             entity=EXPERIMENT_CONFIG["wandb_entity"],
             mode=EXPERIMENT_CONFIG["wandb_mode"],
@@ -77,12 +77,15 @@ def init_wandb_run(name: str, group: str, config: Dict[str, Any], tags: List[str
             group=group,
             tags=tags,
             config=config,
-            reinit=True,
+            finish_previous=True,
             save_code=True,
         )
+        wandb.define_metric("global_step")
+        wandb.define_metric("*", step_metric="global_step")
+        return run
     except Exception as exc:
         print(f"W&B init failed ({exc}). Falling back to disabled mode.")
-        return wandb.init(
+        run = wandb.init(
             project=EXPERIMENT_CONFIG["wandb_project"],
             entity=EXPERIMENT_CONFIG["wandb_entity"],
             mode="disabled",
@@ -90,9 +93,12 @@ def init_wandb_run(name: str, group: str, config: Dict[str, Any], tags: List[str
             group=group,
             tags=tags,
             config=config,
-            reinit=True,
+            finish_previous=True,
             save_code=False,
         )
+        wandb.define_metric("global_step")
+        wandb.define_metric("*", step_metric="global_step")
+        return run
 
 
 def mask_fn(env: gym.Env) -> np.ndarray:
@@ -173,11 +179,10 @@ class WandbEvalCallback(BaseCallback):
         )
         wandb.log(
             {
+                "global_step": self.num_timesteps,
                 f"{self.metric_prefix}/eval_mean_true_reward": mean_reward,
                 f"{self.metric_prefix}/eval_std_true_reward": std_reward,
-                "global_step": self.num_timesteps,
-            },
-            step=self.num_timesteps,
+            }
         )
         return True
 
