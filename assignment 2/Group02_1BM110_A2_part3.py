@@ -43,9 +43,9 @@ EXPERIMENT_CONFIG = {
         "max_weight": 200,
         "randomize_params_on_reset": False,
     },
-    "total_timesteps": 50_000,
-    "eval_freq": 1_000,
-    "n_eval_episodes": 10,
+    "total_timesteps": 20_000,
+    "eval_freq": 2_000,
+    "n_eval_episodes": 5,
     "seeds": [42, 123, 456],
     "wandb_project": "assignment-2-bounded-knapsack",
     "wandb_entity": None,
@@ -54,16 +54,16 @@ EXPERIMENT_CONFIG = {
 
 DEFAULT_PPO = {
     "learning_rate": 3e-4,
-    "n_steps": 2048,
-    "batch_size": 64,
-    "n_epochs": 10,
+    "n_steps": 512,
+    "batch_size": 32,
+    "n_epochs": 5,
     "clip_range": 0.2,
 }
 
 MASKED_PPO_GRID = {
     "learning_rate": [1e-4, 3e-4, 1e-3],
-    "n_steps": [512, 1024, 2048],
-    "ent_coef": [0.0, 0.01, 0.05],
+    "n_steps": [128, 256, 512],
+    "ent_coef": [0.0, 0.005, 0.01],
 }
 
 

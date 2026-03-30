@@ -40,9 +40,9 @@ EXPERIMENT_CONFIG = {
         "max_weight": 200,
         "randomize_params_on_reset": False,
     },
-    "total_timesteps": 50_000,
-    "eval_freq": 1_000,
-    "n_eval_episodes": 10,
+    "total_timesteps": 20_000,
+    "eval_freq": 2_000,
+    "n_eval_episodes": 5,
     "seeds": [42, 123, 456],
     "wandb_project": "assignment-2-bounded-knapsack",
     "wandb_entity": None,
@@ -51,31 +51,31 @@ EXPERIMENT_CONFIG = {
 
 DEFAULT_DQN = {
     "learning_rate": 1e-4,
-    "buffer_size": 50_000,
-    "batch_size": 32,
+    "buffer_size": 10_000,
+    "batch_size": 16,
     "exploration_fraction": 0.1,
     "exploration_initial_eps": 1.0,
 }
 
 DEFAULT_PPO = {
     "learning_rate": 3e-4,
-    "n_steps": 2048,
-    "batch_size": 64,
-    "n_epochs": 10,
+    "n_steps": 512,
+    "batch_size": 32,
+    "n_epochs": 5,
     "clip_range": 0.2,
 }
 
 PART2_SEARCH_SPACE = {
     "DQN": {
         "learning_rate": [1e-5, 3e-5, 1e-4, 3e-4, 1e-3],
-        "batch_size": [16, 32, 64, 128, 256],
-        "buffer_size": [10_000, 50_000, 100_000, 500_000, 1_000_000],
+        "batch_size": [8, 16, 32, 64, 128],
+        "buffer_size": [2_000, 5_000, 10_000, 25_000, 50_000],
         "exploration_initial_eps": [1.0, 0.9, 0.5, 0.3, 0.1],
     },
     "PPO": {
         "learning_rate": [1e-5, 3e-5, 1e-4, 3e-4, 1e-3],
-        "batch_size": [16, 32, 64, 128, 256],
-        "n_steps": [512, 1024, 2048, 4096, 8192],
+        "batch_size": [8, 16, 32, 64, 128],
+        "n_steps": [128, 256, 512, 1024, 2048],
         "clip_range": [0.05, 0.1, 0.2, 0.3, 0.4],
     },
 }
