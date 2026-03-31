@@ -25,10 +25,8 @@ from stable_baselines3.common.monitor import Monitor
 from knapsack_env import BoundedKnapsackEnv
 
 
-# ---------------------------------------------------------------------------
-# Directory setup
-# ---------------------------------------------------------------------------
-# Here we define the directories (which are liek folders) that are used to store logs, figures, and experiment results.
+# This is the directory setup
+# here we define the directories (which are liek folders) that are used to store logs, figures, and experiment results.
 # Creating these directories at the beginning avoids errors later if the
 # script tries to save something that doesn't have a directory yet.
 
@@ -42,12 +40,9 @@ PART2_RESULTS_PATH = RESULTS_DIR / "assignment2_part2_summary.json"
 for directory in (LOG_DIR, FIGURE_DIR, RESULTS_DIR):
     directory.mkdir(exist_ok=True)
 
-# ---------------------------------------------------------------------------
-# Experiment configuration
-# ---------------------------------------------------------------------------
-# This is  the central configuration dictionary which contains environment parameters,
+# This is  the central configuration folder which contains environment parameters,
 # training settings, evaluation frequency, seeds and logging options.
-# Using the central config options allows us to make the experiments reproducible and easier to modify.
+# Using this function makes its easier for us to reproduce and modify the experiments.
 
 EXPERIMENT_CONFIG = {
     "env": {
@@ -64,8 +59,9 @@ EXPERIMENT_CONFIG = {
     "wandb_mode": "online",
 }
 
-# These are the default PPO parameters that are used as fallback if tuned parameters 
-# from Part 2 cannot be loaded.
+# These are the default PPO parameters used in part2 of the assignment.
+# We reuse them here so the comparison between PPO and MaskablePPO
+# is fair and isnt influenced by completely different settings.
 
 DEFAULT_PPO = {
     "learning_rate": 3e-4,
@@ -84,10 +80,9 @@ MASKED_PPO_GRID = {
     "ent_coef": [0.0, 0.005, 0.01],
 }
 
-# ---------------------------------------------------------------------------
-# Weights & Biases initialization
-# ---------------------------------------------------------------------------
-# This function starts a W&B run so that metrics and plots can be tracked.
+# Ths function starts a W&B run so that metrics and plots can be tracked.
+# Logging experiments is useful because reinforcement learning
+# training often involves many runs and comparisons.
 # If something goes wrong with W&B (for example no internet), the code
 # switches to disabled mode so the experiment can still continue.
 
@@ -126,9 +121,6 @@ def init_wandb_run(name: str, group: str, config: Dict[str, Any], tags: List[str
         wandb.define_metric("*", step_metric="global_step")
         return run
 
-# ---------------------------------------------------------------------------
-# Action masking
-# ---------------------------------------------------------------------------
 # MaskablePPO needs to know which actions are valid in the current state.
 # The environment already provides this information via get_mask(),
 # so this small helper function simply returns that mask.
@@ -137,10 +129,9 @@ def mask_fn(env: gym.Env) -> np.ndarray:
     # ActionMasker asks for a function like this, so we just pass back the mask from the env
     return env.unwrapped.get_mask()
 
-# ---------------------------------------------------------------------------
-# Environment creation
-# ---------------------------------------------------------------------------
-# This function builds the knapsack environment.
+# The following function builds the knapsack environment.
+# doing this keeps the training code cleaner and ensures every run starts 
+# with the same setup.
 # Important things that happen here are that:
 # - masking is enabled in the environment
 # - ActionMasker wrapper makes the mask visible to MaskablePPO
@@ -154,10 +145,7 @@ def make_env(seed: int, monitor_tag: str = "run") -> gym.Env:
     env = ActionMasker(env, mask_fn)
     return Monitor(env, filename=str(LOG_DIR / f"{monitor_tag}_seed_{seed}"))
 
-# ---------------------------------------------------------------------------
-# Load tuned PPO parameters from Part 2
-# ---------------------------------------------------------------------------
-# Part 3 builds on the work from Part 2. Instead of starting from scratch,
+# Part 3 builds on the work from Part 2. Instead of starting from scratch again,
 # we load the best PPO hyperparameters that were found earlier.
 
 def load_part2_best_ppo_params() -> Tuple[Dict[str, Any], Dict[str, float]]:
@@ -174,9 +162,6 @@ def load_part2_best_ppo_params() -> Tuple[Dict[str, Any], Dict[str, float]]:
     print("Part 2 summary not found. Falling back to default PPO hyperparameters.")
     return dict(DEFAULT_PPO), {}
 
-# ---------------------------------------------------------------------------
-# Action prediction
-# ---------------------------------------------------------------------------
 # When the model chooses an action we also pass the action mask.
 # This guarantees that the agent never selects an invalid item.
 
@@ -186,11 +171,12 @@ def predict_action(model: Any, obs: np.ndarray, env: gym.Env) -> int:
     action, _ = model.predict(obs, deterministic=True, action_masks=action_masks)
     return int(action)
 
-# ---------------------------------------------------------------------------
-# Agent evaluation
-# ---------------------------------------------------------------------------
-# Runs several episodes with the trained agent and reports the
+
+# this runs several episodes with the trained agent and reports the
 # mean and standard deviation of the reward.
+# The goal is to measure how well the learned policy performs.
+# We average the reward across episodes because single runs
+# can vary due to randomness.
 
 def evaluate_agent(model: Any, seed: int, n_episodes: int) -> Tuple[float, float, List[float]]:
     eval_env = make_env(seed=seed, monitor_tag="part3_eval")
@@ -214,10 +200,7 @@ def evaluate_agent(model: Any, seed: int, n_episodes: int) -> Tuple[float, float
     eval_env.close()
     return float(np.mean(rewards)), float(np.std(rewards)), rewards
 
-# ---------------------------------------------------------------------------
-# Evaluation callback
-# ---------------------------------------------------------------------------
-# During training we periodicaly evaluate the agent.
+# during training we periodicaly evaluate the agent.
 # This allows us to track how performance improves over time.
 
 class WandbEvalCallback(BaseCallback):
@@ -255,9 +238,7 @@ class WandbEvalCallback(BaseCallback):
         )
         return True
 
-# ---------------------------------------------------------------------------
-# Training with one seed
-# ---------------------------------------------------------------------------
+# here we train with one seed
 # Each seed trains a separate agent. Averaging over multiple seeds
 # gives more reliable results because reinforcement learning can be noisy.
 
@@ -295,9 +276,7 @@ def train_single_seed(hyperparams: Dict[str, Any], seed: int, stage: str) -> Dic
         "final_episode_rewards": episode_rewards,
     }
 
-# ---------------------------------------------------------------------------
-# Averaging results across seeds
-# ---------------------------------------------------------------------------
+# The following part is for averaging results across seeds
 
 def aggregate_seed_curves(seed_runs: List[Dict[str, Any]]) -> List[Dict[str, float]]:
     # use the shortest curve length so averaging stays aligned across all seeds
@@ -396,9 +375,6 @@ def run_multi_seed_experiment(hyperparams: Dict[str, Any], stage: str) -> Dict[s
     return summary
 
 
-# ---------------------------------------------------------------------------
-# Hyperparameter tuning
-# ---------------------------------------------------------------------------
 # here we try multiple values for each parameter and keep the best one.
 # Each parameter is tested with several candidate values.
 #
@@ -440,9 +416,10 @@ def tune_hyperparameters(base_hyperparams: Dict[str, Any], search_space: Dict[st
 
     return best_params, tuning_history
 
-# ---------------------------------------------------------------------------
-# Save results
-# ---------------------------------------------------------------------------
+
+# the following is used to save the results of the model
+# Saving the results allows us to reuse them later for plots
+# and analyze them without needing to run the experiments again.
 
 def save_json(filename: str, payload: Dict[str, Any]) -> None:
     path = RESULTS_DIR / filename
@@ -450,10 +427,7 @@ def save_json(filename: str, payload: Dict[str, Any]) -> None:
     with path.open("w", encoding="utf-8") as handle:
         json.dump(payload, handle, indent=2)
 
-# ---------------------------------------------------------------------------
-# Main experiment pipeline
-# ---------------------------------------------------------------------------
-# how the workflow works:
+# This is how the model works:
 # 1. Loads the best PPO parameters from Part 2.
 # 2. Trains MaskablePPO using these parameters.
 # 3. Tunes some additional MaskablePPO hyperparameters.
