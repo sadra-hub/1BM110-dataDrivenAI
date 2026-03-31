@@ -25,6 +25,12 @@ from stable_baselines3.common.monitor import Monitor
 from knapsack_env import BoundedKnapsackEnv
 
 
+# ---------------------------------------------------------------------------
+# Directory setup
+# ---------------------------------------------------------------------------
+# Here we define the directories that are used to store logs, figures, and experiment results.
+# Creating them at the beginning prevents runtime errors later when files are saved after long training runs.
+
 PROJECT_ROOT = Path(__file__).resolve().parent
 LOG_DIR = PROJECT_ROOT / "logs"
 FIGURE_DIR = PROJECT_ROOT / "figures"
