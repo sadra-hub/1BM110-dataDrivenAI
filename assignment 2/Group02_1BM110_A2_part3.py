@@ -276,8 +276,16 @@ def train_single_seed(hyperparams: Dict[str, Any], seed: int, stage: str) -> Dic
         "final_episode_rewards": episode_rewards,
     }
 
-# The following part is for averaging results across seeds
+# Reinforcement learning training is random, so results can vary
+# depending on the seed (this can be because of exploration, environment
+# randomness, etc.).
+# to get more reliable results, we want to train model multiple times
+# with different seeds and average out the outcomes. This gives us a more
+# stable estimate of how well the model actually performs.
+# The mean curve shows the general learning trend, while the
+# standard deviation shows how much the results differ between runs.
 
+# The following part is for averaging results across seeds
 def aggregate_seed_curves(seed_runs: List[Dict[str, Any]]) -> List[Dict[str, float]]:
     # use the shortest curve length so averaging stays aligned across all seeds
     min_len = min(len(run["curve"]) for run in seed_runs)
@@ -377,7 +385,6 @@ def run_multi_seed_experiment(hyperparams: Dict[str, Any], stage: str) -> Dict[s
 
 # here we try multiple values for each parameter and keep the best one.
 # Each parameter is tested with several candidate values.
-#
 # The best performing value is based on mean reward across seeds
 # this best value is then selected before moving on to the next parameter.
 
