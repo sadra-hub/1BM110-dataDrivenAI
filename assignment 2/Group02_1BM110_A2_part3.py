@@ -28,7 +28,7 @@ from knapsack_env import BoundedKnapsackEnv
 # ---------------------------------------------------------------------------
 # Directory setup
 # ---------------------------------------------------------------------------
-# Here we define the directories that are used to store logs, figures, and experiment results.
+# Here we define the directories (which are liek folders) that are used to store logs, figures, and experiment results.
 # Creating these directories at the beginning avoids errors later if the
 # script tries to save something that doesn't have a directory yet.
 
