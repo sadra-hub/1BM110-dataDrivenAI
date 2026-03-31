@@ -1,0 +1,1 @@
+{"columns": ["hyperparameter", "candidate", "mean_reward", "std_reward"], "data": [["exploration_initial_eps", "1.0", 313.0, 228.28636986615444], ["exploration_initial_eps", "0.9", 267.00000000000006, 218.67022354830735], ["exploration_initial_eps", "0.5", 310.3333333333334, 181.4907405045473]]}

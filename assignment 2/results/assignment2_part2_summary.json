@@ -5,7 +5,7 @@
       "max_weight": 200,
       "randomize_params_on_reset": false
     },
-    "total_timesteps": 10000,
+    "total_timesteps": 50000,
     "eval_freq": 2000,
     "n_eval_episodes": 5,
     "seeds": [
@@ -19,12 +19,12 @@
   },
   "final_summary": {
     "default_dqn": {
-      "final_mean_reward": 514.6666666666666,
-      "final_std_reward": 166.96573168035272
+      "final_mean_reward": 410.6666666666667,
+      "final_std_reward": 285.19622874240264
     },
     "default_ppo": {
-      "final_mean_reward": 329.3333333333333,
-      "final_std_reward": 16.75974011996871
+      "final_mean_reward": 62.333333333333336,
+      "final_std_reward": 66.26378263341815
     },
     "best_dqn_params": {
       "learning_rate": 0.0001,
@@ -32,23 +32,23 @@
       "batch_size": 16,
       "exploration_fraction": 0.1,
       "exploration_initial_eps": 1.0,
-      "gamma": 0.9
+      "gamma": 0.97
     },
     "best_ppo_params": {
-      "learning_rate": 0.0001,
+      "learning_rate": 1e-05,
       "n_steps": 512,
       "batch_size": 32,
       "n_epochs": 5,
-      "clip_range": 0.2,
-      "gamma": 0.95
+      "clip_range": 0.1,
+      "gamma": 0.9
     },
     "tuned_dqn": {
-      "final_mean_reward": 245.66666666666666,
-      "final_std_reward": 156.61062827563424
+      "final_mean_reward": 365.3333333333333,
+      "final_std_reward": 185.3543153590502
     },
     "tuned_ppo": {
-      "final_mean_reward": 228.66666666666666,
-      "final_std_reward": 155.0426464629078
+      "final_mean_reward": 238.6666666666667,
+      "final_std_reward": 143.12077262073305
     }
   },
   "dqn_tuning": {
@@ -56,80 +56,80 @@
       {
         "hyperparameter": "learning_rate",
         "candidate": 1e-05,
-        "mean_reward": 158.33333333333334,
-        "std_reward": 50.94005191289945
+        "mean_reward": 55.333333333333336,
+        "std_reward": 18.90913947157711
       },
       {
         "hyperparameter": "learning_rate",
         "candidate": 3e-05,
-        "mean_reward": 121.33333333333333,
-        "std_reward": 89.70073702162219
+        "mean_reward": 62.0,
+        "std_reward": 63.93746945258312
       },
       {
         "hyperparameter": "learning_rate",
         "candidate": 0.0001,
-        "mean_reward": 361.0,
-        "std_reward": 158.7891683963361
+        "mean_reward": 201.33333333333334,
+        "std_reward": 237.10100988584776
       }
     ],
     "gamma": [
       {
         "hyperparameter": "gamma",
         "candidate": 0.9,
-        "mean_reward": 209.66666666666666,
-        "std_reward": 185.96475173776588
+        "mean_reward": 137.66666666666666,
+        "std_reward": 43.25377311736964
       },
       {
         "hyperparameter": "gamma",
         "candidate": 0.95,
-        "mean_reward": 165.66666666666666,
-        "std_reward": 96.42383292296337
+        "mean_reward": 136.00000000000003,
+        "std_reward": 58.12629926863286
       },
       {
         "hyperparameter": "gamma",
         "candidate": 0.97,
-        "mean_reward": 68.0,
-        "std_reward": 41.21488404286329
+        "mean_reward": 313.0,
+        "std_reward": 228.28636986615444
       }
     ],
     "buffer_size": [
       {
         "hyperparameter": "buffer_size",
         "candidate": 2000,
-        "mean_reward": 186.0,
-        "std_reward": 77.88880963698615
+        "mean_reward": 87.33333333333333,
+        "std_reward": 64.65463805654025
       },
       {
         "hyperparameter": "buffer_size",
         "candidate": 5000,
-        "mean_reward": 44.0,
-        "std_reward": 17.048949136725895
+        "mean_reward": 220.66666666666666,
+        "std_reward": 129.78272441105386
       },
       {
         "hyperparameter": "buffer_size",
         "candidate": 10000,
-        "mean_reward": 252.33333333333334,
-        "std_reward": 152.425573823934
+        "mean_reward": 377.6666666666667,
+        "std_reward": 178.23081165225676
       }
     ],
     "exploration_initial_eps": [
       {
         "hyperparameter": "exploration_initial_eps",
         "candidate": 1.0,
-        "mean_reward": 209.66666666666666,
-        "std_reward": 185.96475173776588
+        "mean_reward": 313.0,
+        "std_reward": 228.28636986615444
       },
       {
         "hyperparameter": "exploration_initial_eps",
         "candidate": 0.9,
-        "mean_reward": 161.0,
-        "std_reward": 90.41017641836565
+        "mean_reward": 267.00000000000006,
+        "std_reward": 218.67022354830735
       },
       {
         "hyperparameter": "exploration_initial_eps",
         "candidate": 0.5,
-        "mean_reward": 184.33333333333337,
-        "std_reward": 181.71467255624196
+        "mean_reward": 310.3333333333334,
+        "std_reward": 181.4907405045473
       }
     ]
   },
@@ -138,80 +138,80 @@
       {
         "hyperparameter": "learning_rate",
         "candidate": 1e-05,
-        "mean_reward": 84.66666666666667,
-        "std_reward": 8.576453553512405
+        "mean_reward": 238.6666666666667,
+        "std_reward": 143.12077262073305
       },
       {
         "hyperparameter": "learning_rate",
         "candidate": 3e-05,
-        "mean_reward": 71.66666666666667,
-        "std_reward": 41.023028762987366
+        "mean_reward": 157.00000000000003,
+        "std_reward": 200.12162968221773
       },
       {
         "hyperparameter": "learning_rate",
         "candidate": 0.0001,
-        "mean_reward": 201.33333333333334,
-        "std_reward": 86.73843182554982
+        "mean_reward": 218.00000000000003,
+        "std_reward": 174.73599133168497
       }
     ],
     "gamma": [
       {
         "hyperparameter": "gamma",
         "candidate": 0.9,
-        "mean_reward": 93.0,
-        "std_reward": 59.90548110704618
+        "mean_reward": 192.6666666666667,
+        "std_reward": 179.78011260673108
       },
       {
         "hyperparameter": "gamma",
         "candidate": 0.95,
-        "mean_reward": 287.3333333333333,
-        "std_reward": 72.55955408413759
+        "mean_reward": 120.6666666666667,
+        "std_reward": 84.10046901705658
       },
       {
         "hyperparameter": "gamma",
         "candidate": 0.97,
-        "mean_reward": 92.33333333333333,
-        "std_reward": 40.052743004970615
+        "mean_reward": 192.6666666666667,
+        "std_reward": 179.78011260673108
       }
     ],
     "n_steps": [
       {
         "hyperparameter": "n_steps",
         "candidate": 128,
-        "mean_reward": 199.66666666666666,
-        "std_reward": 66.61497996363548
+        "mean_reward": 142.66666666666669,
+        "std_reward": 111.64626679333661
       },
       {
         "hyperparameter": "n_steps",
         "candidate": 256,
-        "mean_reward": 60.0,
-        "std_reward": 35.364765892999586
+        "mean_reward": 222.0,
+        "std_reward": 57.39337940912697
       },
       {
         "hyperparameter": "n_steps",
         "candidate": 512,
-        "mean_reward": 233.33333333333334,
-        "std_reward": 148.46174217248324
+        "mean_reward": 237.33333333333337,
+        "std_reward": 143.90120067447515
       }
     ],
     "clip_range": [
       {
         "hyperparameter": "clip_range",
         "candidate": 0.05,
-        "mean_reward": 186.33333333333334,
-        "std_reward": 99.06339160131535
+        "mean_reward": 120.6666666666667,
+        "std_reward": 84.10046901705658
       },
       {
         "hyperparameter": "clip_range",
         "candidate": 0.1,
-        "mean_reward": 186.33333333333334,
-        "std_reward": 99.06339160131535
+        "mean_reward": 192.6666666666667,
+        "std_reward": 179.78011260673108
       },
       {
         "hyperparameter": "clip_range",
         "candidate": 0.2,
-        "mean_reward": 287.3333333333333,
-        "std_reward": 72.55955408413759
+        "mean_reward": 192.6666666666667,
+        "std_reward": 179.78011260673108
       }
     ]
   }

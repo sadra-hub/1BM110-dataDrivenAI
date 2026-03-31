@@ -1,0 +1,1 @@
+{"columns": ["hyperparameter", "candidate", "mean_reward", "std_reward"], "data": [["buffer_size", "2000", 87.33333333333333, 64.65463805654025], ["buffer_size", "5000", 220.66666666666666, 129.78272441105386], ["buffer_size", "10000", 377.6666666666667, 178.23081165225676]]}
