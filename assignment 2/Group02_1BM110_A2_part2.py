@@ -47,7 +47,7 @@ EXPERIMENT_CONFIG = {
     "wandb_entity": None,
     "wandb_mode": "online",
 }
-
+# Default hyperparameters for DQN
 DEFAULT_DQN = {
     "learning_rate": 1e-4,
     "buffer_size": 10_000,
@@ -56,6 +56,7 @@ DEFAULT_DQN = {
     "exploration_initial_eps": 1.0,
 }
 
+# Default hyperparameters for PPO
 DEFAULT_PPO = {
     "learning_rate": 3e-4,
     "n_steps": 512,
@@ -154,7 +155,7 @@ class WandbEvalCallback(BaseCallback):
         self.eval_freq = eval_freq
         self.n_eval_episodes = n_eval_episodes
         self.metric_prefix = metric_prefix
-        self.history: List[Dict[str, float]] = []
+        self.history: List[Dict[str, float]] = [] # store eval results over time
 
     def _on_step(self) -> bool:
         if self.n_calls % self.eval_freq != 0:
@@ -390,6 +391,7 @@ def main() -> None:
     dqn_default = run_multi_seed_experiment("DQN", DEFAULT_DQN, stage="part2_default_dqn")
     ppo_default = run_multi_seed_experiment("PPO", DEFAULT_PPO, stage="part2_default_ppo")
 
+# Plot and log default results
     plot_aggregate_curve(dqn_default["aggregate_curve"], "DQN with default hyperparameters", "part2_default_dqn.png", "figures/part2_default_dqn")
     plot_aggregate_curve(ppo_default["aggregate_curve"], "PPO with default hyperparameters", "part2_default_ppo.png", "figures/part2_default_ppo")
     plot_comparison_curves(
@@ -420,7 +422,7 @@ def main() -> None:
         "part2_tuned_comparison.png",
         "figures/part2_tuned_comparison",
     )
-
+    # Build a summary to save locally
     final_summary = {
         "default_dqn": {
             "final_mean_reward": dqn_default["final_mean_reward"],
@@ -452,6 +454,7 @@ def main() -> None:
         },
     )
 
+    # Also log summary to wandb
     wandb.summary["part2/best_dqn_params"] = best_dqn_params
     wandb.summary["part2/best_ppo_params"] = best_ppo_params
     wandb.summary["part2/dqn_tuned_final_mean_reward"] = dqn_tuned["final_mean_reward"]
