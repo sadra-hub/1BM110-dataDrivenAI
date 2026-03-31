@@ -1,0 +1,1 @@
+{"columns": ["hyperparameter", "candidate", "mean_reward", "std_reward"], "data": [["learning_rate", "0.0001", 512.3333333333334, 198.27982471469184], ["learning_rate", "0.0003", 468.3333333333333, 144.44452991450467], ["learning_rate", "0.001", 449.3333333333334, 224.03769524097711]]}
