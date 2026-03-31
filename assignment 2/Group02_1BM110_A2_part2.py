@@ -3,11 +3,9 @@ Assignment 2 - Part 2
 
 - Train DQN and PPO on BoundedKnapsackEnv
 - Aggregate results across 3 seeds
-- Tune 4 hyperparameters manually with 5 candidate values each
+- Tune 4 hyperparameters manually with 3 candidate values each
 - Log metrics, tables, and figures to W&B
 """
-
-from __future__ import annotations
 
 import json
 import os
@@ -30,6 +28,7 @@ LOG_DIR = PROJECT_ROOT / "logs"
 FIGURE_DIR = PROJECT_ROOT / "figures"
 RESULTS_DIR = PROJECT_ROOT / "results"
 
+# make these folders once at the start so saving logs and plots does not break later
 for directory in (LOG_DIR, FIGURE_DIR, RESULTS_DIR):
     directory.mkdir(exist_ok=True)
 
@@ -65,6 +64,7 @@ DEFAULT_PPO = {
     "clip_range": 0.2,
 }
 
+# reduce the search space to keep the total runtime manageable, but still have some variety to see what works best
 PART2_SEARCH_SPACE = {
     "DQN": {
         "learning_rate": [1e-5, 3e-5, 1e-4],
@@ -82,13 +82,15 @@ PART2_SEARCH_SPACE = {
 
 
 def make_env(seed: int, monitor_tag: str = "run") -> gym.Env:
+    # part 2 is the no-mask baseline, so masking stays off here on purpose
     env = BoundedKnapsackEnv(**EXPERIMENT_CONFIG["env"], mask=False)
     env.reset(seed=seed)
     return Monitor(env, filename=str(LOG_DIR / f"{monitor_tag}_seed_{seed}"))
 
-
+# using wandb helps with montioring the results online as they come in, and it also makes it easy to log tables and figures in a way that keeps them organized and shareable
 def init_wandb_run(name: str, group: str, config: Dict[str, Any], tags: List[str]) -> Any:
     try:
+        # use wandb when possible because the assignment asks for tracked results and figures
         run = wandb.init(
             project=EXPERIMENT_CONFIG["wandb_project"],
             entity=EXPERIMENT_CONFIG["wandb_entity"],
@@ -104,6 +106,7 @@ def init_wandb_run(name: str, group: str, config: Dict[str, Any], tags: List[str
         wandb.define_metric("*", step_metric="global_step")
         return run
     except Exception as exc:
+        # if wandb fails, still run the experiment and keep local outputs
         print(f"W&B init failed ({exc}). Falling back to disabled mode.")
         run = wandb.init(
             project=EXPERIMENT_CONFIG["wandb_project"],
@@ -126,6 +129,7 @@ def evaluate_agent(model: Any, seed: int, n_episodes: int) -> Tuple[float, float
     rewards: List[float] = []
 
     for episode in range(n_episodes):
+        # change the seed per episode a bit so evaluation is not just one repeated reset
         obs, _ = eval_env.reset(seed=seed + episode)
         done = False
         total_reward = 0.0
@@ -136,6 +140,7 @@ def evaluate_agent(model: Any, seed: int, n_episodes: int) -> Tuple[float, float
             total_reward += reward
             done = terminated or truncated
 
+        # the env scales reward down, so bring it back to the more readable true reward
         rewards.append(total_reward * 100.0)
 
     eval_env.close()
@@ -155,6 +160,7 @@ class WandbEvalCallback(BaseCallback):
         if self.n_calls % self.eval_freq != 0:
             return True
 
+        # evaluate during training so later we can plot the learning curve, not only the final score
         mean_reward, std_reward, _ = evaluate_agent(
             self.model,
             seed=self.eval_seed,
@@ -178,6 +184,7 @@ class WandbEvalCallback(BaseCallback):
 
 
 def build_model(algorithm: str, env: gym.Env, seed: int, hyperparams: Dict[str, Any]) -> Any:
+    # keep model creation in one place so switching between DQN and PPO stays simple
     if algorithm == "DQN":
         return DQN("MlpPolicy", env, verbose=0, seed=seed, **hyperparams)
     if algorithm == "PPO":
@@ -193,6 +200,7 @@ def train_single_seed(algorithm: str, hyperparams: Dict[str, Any], seed: int, st
         n_eval_episodes=EXPERIMENT_CONFIG["n_eval_episodes"],
         metric_prefix=f"{stage}/{algorithm}/seed_{seed}",
     )
+    # train each seed separately so the final result is not based on one lucky run
     model = build_model(algorithm, env, seed=seed, hyperparams=hyperparams)
     model.learn(total_timesteps=EXPERIMENT_CONFIG["total_timesteps"], callback=callback)
 
@@ -220,6 +228,7 @@ def train_single_seed(algorithm: str, hyperparams: Dict[str, Any], seed: int, st
 
 
 def aggregate_seed_curves(seed_runs: List[Dict[str, Any]]) -> List[Dict[str, float]]:
+    # use the shortest history so averaging lines up correctly across all seeds
     min_len = min(len(run["curve"]) for run in seed_runs)
     aggregate: List[Dict[str, float]] = []
 
@@ -241,6 +250,7 @@ def plot_aggregate_curve(aggregate_curve: List[Dict[str, float]], title: str, fi
     mean = np.array([point["mean_true_reward"] for point in aggregate_curve])
     std = np.array([point["std_true_reward"] for point in aggregate_curve])
 
+    # plot both the average and the spread so seed differences are visible too
     plt.figure(figsize=(10, 6))
     plt.plot(x, mean, label="Mean true reward")
     plt.fill_between(x, mean - std, mean + std, alpha=0.25, label="Std across seeds")
@@ -264,6 +274,7 @@ def plot_comparison_curves(named_curves: Dict[str, List[Dict[str, float]]], titl
         x = np.array([point["timesteps"] for point in curve])
         mean = np.array([point["mean_true_reward"] for point in curve])
         std = np.array([point["std_true_reward"] for point in curve])
+        # draw each method with its own shaded range so the comparison is easier to read
         plt.plot(x, mean, label=name)
         plt.fill_between(x, mean - std, mean + std, alpha=0.18)
 
@@ -281,6 +292,7 @@ def plot_comparison_curves(named_curves: Dict[str, List[Dict[str, float]]], titl
 
 
 def log_curve_table(table_name: str, aggregate_curve: List[Dict[str, float]]) -> None:
+    # tables are useful because they keep the exact curve values behind the plots
     table = wandb.Table(columns=["timesteps", "mean_true_reward", "std_true_reward"])
     for row in aggregate_curve:
         table.add_data(row["timesteps"], row["mean_true_reward"], row["std_true_reward"])
@@ -292,6 +304,7 @@ def run_multi_seed_experiment(algorithm: str, hyperparams: Dict[str, Any], stage
     for seed in EXPERIMENT_CONFIG["seeds"]:
         seed_runs.append(train_single_seed(algorithm=algorithm, hyperparams=hyperparams, seed=seed, stage=stage))
 
+    # average across the assignment seeds so the score is more stable and fair
     aggregate_curve = aggregate_seed_curves(seed_runs)
     final_rewards = [run["final_mean_reward"] for run in seed_runs]
     summary = {
@@ -324,6 +337,7 @@ def tune_hyperparameters(
     for hyperparam_name, candidates in search_space.items():
         results: List[Dict[str, Any]] = []
         for candidate in candidates:
+            # change one hyperparameter at a time so it is easier to see what helped
             candidate_params = dict(best_params)
             candidate_params[hyperparam_name] = candidate
             run_summary = run_multi_seed_experiment(
@@ -343,6 +357,7 @@ def tune_hyperparameters(
                 f"mean final reward = {run_summary['final_mean_reward']:.2f}"
             )
 
+        # keep the best value before moving on to tune the next setting
         best_result = max(results, key=lambda item: item["mean_reward"])
         best_params[hyperparam_name] = best_result["candidate"]
         tuning_history[hyperparam_name] = results
@@ -357,6 +372,7 @@ def tune_hyperparameters(
 
 def save_json(filename: str, payload: Dict[str, Any]) -> None:
     path = RESULTS_DIR / filename
+    # save a local summary too so the main outputs are easy to reuse in part 3
     with path.open("w", encoding="utf-8") as handle:
         json.dump(payload, handle, indent=2)
 
@@ -370,6 +386,7 @@ def main() -> None:
     )
 
     print("=== Part 2: Default training ===")
+    # start with the default settings so there is a baseline before any tuning
     dqn_default = run_multi_seed_experiment("DQN", DEFAULT_DQN, stage="part2_default_dqn")
     ppo_default = run_multi_seed_experiment("PPO", DEFAULT_PPO, stage="part2_default_ppo")
 
@@ -386,10 +403,12 @@ def main() -> None:
     log_curve_table("tables/part2_default_ppo_curve", ppo_default["aggregate_curve"])
 
     print("\n=== Part 2: Hyperparameter tuning ===")
+    # after the baseline, try a few candidate values to see which setup works better
     best_dqn_params, dqn_tuning = tune_hyperparameters("DQN", DEFAULT_DQN, PART2_SEARCH_SPACE["DQN"], "part2_tuning_dqn")
     best_ppo_params, ppo_tuning = tune_hyperparameters("PPO", DEFAULT_PPO, PART2_SEARCH_SPACE["PPO"], "part2_tuning_ppo")
 
     print("\n=== Part 2: Final tuned training ===")
+    # train once more with the best settings so the final comparison uses the selected configs
     dqn_tuned = run_multi_seed_experiment("DQN", best_dqn_params, stage="part2_tuned_dqn")
     ppo_tuned = run_multi_seed_experiment("PPO", best_ppo_params, stage="part2_tuned_ppo")
 

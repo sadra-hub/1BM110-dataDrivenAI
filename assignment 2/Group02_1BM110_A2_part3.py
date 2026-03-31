@@ -8,8 +8,6 @@ Assignment 2 - Part 3
 - Log metrics, tables, and figures to W&B
 """
 
-from __future__ import annotations
-
 import json
 import os
 from pathlib import Path
@@ -33,6 +31,7 @@ FIGURE_DIR = PROJECT_ROOT / "figures"
 RESULTS_DIR = PROJECT_ROOT / "results"
 PART2_RESULTS_PATH = RESULTS_DIR / "assignment2_part2_summary.json"
 
+# create folders early so later saving steps do not fail in the middle of a run
 for directory in (LOG_DIR, FIGURE_DIR, RESULTS_DIR):
     directory.mkdir(exist_ok=True)
 
@@ -69,6 +68,7 @@ MASKED_PPO_GRID = {
 
 def init_wandb_run(name: str, group: str, config: Dict[str, Any], tags: List[str]) -> Any:
     try:
+        # try online logging first because the assignment expects tracked runs and figures
         run = wandb.init(
             project=EXPERIMENT_CONFIG["wandb_project"],
             entity=EXPERIMENT_CONFIG["wandb_entity"],
@@ -84,6 +84,7 @@ def init_wandb_run(name: str, group: str, config: Dict[str, Any], tags: List[str
         wandb.define_metric("*", step_metric="global_step")
         return run
     except Exception as exc:
+        # if wandb breaks, keep the experiment running instead of losing all results
         print(f"W&B init failed ({exc}). Falling back to disabled mode.")
         run = wandb.init(
             project=EXPERIMENT_CONFIG["wandb_project"],
@@ -102,12 +103,15 @@ def init_wandb_run(name: str, group: str, config: Dict[str, Any], tags: List[str
 
 
 def mask_fn(env: gym.Env) -> np.ndarray:
+    # ActionMasker asks for a function like this, so we just pass back the mask from the env
     return env.unwrapped.get_mask()
 
 
 def make_env(seed: int, monitor_tag: str = "run") -> gym.Env:
+    # mask=True is the whole point here because part 3 compares masked PPO against normal PPO
     env = BoundedKnapsackEnv(**EXPERIMENT_CONFIG["env"], mask=True)
     env.reset(seed=seed)
+    # this wrapper lets MaskablePPO see which actions should be blocked
     env = ActionMasker(env, mask_fn)
     return Monitor(env, filename=str(LOG_DIR / f"{monitor_tag}_seed_{seed}"))
 
@@ -116,16 +120,19 @@ def load_part2_best_ppo_params() -> Tuple[Dict[str, Any], Dict[str, float]]:
     if PART2_RESULTS_PATH.exists():
         payload = json.loads(PART2_RESULTS_PATH.read_text(encoding="utf-8"))
         summary = payload.get("final_summary", {})
+        # reuse part 2 settings so part 3 starts from the best PPO setup instead of random guesses
         best_ppo_params = summary.get("best_ppo_params", DEFAULT_PPO)
         tuned_ppo = summary.get("tuned_ppo", {})
         print(f"Loaded tuned PPO hyperparameters from {PART2_RESULTS_PATH}")
         return best_ppo_params, tuned_ppo
 
+    # fall back to defaults so the script still works even if part 2 was not saved yet
     print("Part 2 summary not found. Falling back to default PPO hyperparameters.")
     return dict(DEFAULT_PPO), {}
 
 
 def predict_action(model: Any, obs: np.ndarray, env: gym.Env) -> int:
+    # the model needs the current mask during evaluation too, not only during training
     action_masks = env.unwrapped.get_mask()
     action, _ = model.predict(obs, deterministic=True, action_masks=action_masks)
     return int(action)
@@ -136,6 +143,7 @@ def evaluate_agent(model: Any, seed: int, n_episodes: int) -> Tuple[float, float
     rewards: List[float] = []
 
     for episode in range(n_episodes):
+        # shift the seed a bit per episode so evaluation is not just the exact same reset every time
         obs, _ = eval_env.reset(seed=seed + episode)
         done = False
         total_reward = 0.0
@@ -146,6 +154,7 @@ def evaluate_agent(model: Any, seed: int, n_episodes: int) -> Tuple[float, float
             total_reward += reward
             done = terminated or truncated
 
+        # rewards inside the env were scaled down, so multiply back to report the true reward more clearly
         rewards.append(total_reward * 100.0)
 
     eval_env.close()
@@ -165,6 +174,7 @@ class WandbEvalCallback(BaseCallback):
         if self.n_calls % self.eval_freq != 0:
             return True
 
+        # run small check-ins during training so we can plot learning progress instead of only final results
         mean_reward, std_reward, _ = evaluate_agent(
             self.model,
             seed=self.eval_seed,
@@ -195,6 +205,7 @@ def train_single_seed(hyperparams: Dict[str, Any], seed: int, stage: str) -> Dic
         n_eval_episodes=EXPERIMENT_CONFIG["n_eval_episodes"],
         metric_prefix=f"{stage}/MaskablePPO/seed_{seed}",
     )
+    # one model per seed makes the final comparison less dependent on one lucky run
     model = MaskablePPO("MlpPolicy", env, verbose=0, seed=seed, **hyperparams)
     model.learn(total_timesteps=EXPERIMENT_CONFIG["total_timesteps"], callback=callback)
 
@@ -222,6 +233,7 @@ def train_single_seed(hyperparams: Dict[str, Any], seed: int, stage: str) -> Dic
 
 
 def aggregate_seed_curves(seed_runs: List[Dict[str, Any]]) -> List[Dict[str, float]]:
+    # use the shortest curve length so averaging stays aligned across all seeds
     min_len = min(len(run["curve"]) for run in seed_runs)
     aggregate: List[Dict[str, float]] = []
 
@@ -243,6 +255,7 @@ def plot_aggregate_curve(aggregate_curve: List[Dict[str, float]], title: str, fi
     mean = np.array([point["mean_true_reward"] for point in aggregate_curve])
     std = np.array([point["std_true_reward"] for point in aggregate_curve])
 
+    # show the average line and spread together so seed variation is easy to notice
     plt.figure(figsize=(10, 6))
     plt.plot(x, mean, label="Mean true reward")
     plt.fill_between(x, mean - std, mean + std, alpha=0.25, label="Std across seeds")
@@ -266,6 +279,7 @@ def plot_comparison_curves(named_curves: Dict[str, List[Dict[str, float]]], titl
         x = np.array([point["timesteps"] for point in curve])
         mean = np.array([point["mean_true_reward"] for point in curve])
         std = np.array([point["std_true_reward"] for point in curve])
+        # every method gets its own band so the comparison is visual, not just a number in the console
         plt.plot(x, mean, label=name)
         plt.fill_between(x, mean - std, mean + std, alpha=0.18)
 
@@ -283,6 +297,7 @@ def plot_comparison_curves(named_curves: Dict[str, List[Dict[str, float]]], titl
 
 
 def log_curve_table(table_name: str, aggregate_curve: List[Dict[str, float]]) -> None:
+    # save the curve as a table too because figures look nice, but tables are easier to inspect later
     table = wandb.Table(columns=["timesteps", "mean_true_reward", "std_true_reward"])
     for row in aggregate_curve:
         table.add_data(row["timesteps"], row["mean_true_reward"], row["std_true_reward"])
@@ -294,6 +309,7 @@ def run_multi_seed_experiment(hyperparams: Dict[str, Any], stage: str) -> Dict[s
     for seed in EXPERIMENT_CONFIG["seeds"]:
         seed_runs.append(train_single_seed(hyperparams=hyperparams, seed=seed, stage=stage))
 
+    # average over the requested seeds so the reported result is more stable
     aggregate_curve = aggregate_seed_curves(seed_runs)
     final_rewards = [run["final_mean_reward"] for run in seed_runs]
     summary = {
@@ -320,6 +336,7 @@ def tune_hyperparameters(base_hyperparams: Dict[str, Any], search_space: Dict[st
     for hyperparam_name, candidates in search_space.items():
         results: List[Dict[str, Any]] = []
         for candidate in candidates:
+            # start from the current best setup and change one thing at a time to keep tuning understandable
             candidate_params = dict(best_params)
             candidate_params[hyperparam_name] = candidate
             run_summary = run_multi_seed_experiment(candidate_params, stage=f"{stage}_{hyperparam_name}_{candidate}")
@@ -335,6 +352,7 @@ def tune_hyperparameters(base_hyperparams: Dict[str, Any], search_space: Dict[st
                 f"mean final reward = {run_summary['final_mean_reward']:.2f}"
             )
 
+        # keep the best value before moving to the next hyperparameter
         best_result = max(results, key=lambda item: item["mean_reward"])
         best_params[hyperparam_name] = best_result["candidate"]
         tuning_history[hyperparam_name] = results
@@ -349,6 +367,7 @@ def tune_hyperparameters(base_hyperparams: Dict[str, Any], search_space: Dict[st
 
 def save_json(filename: str, payload: Dict[str, Any]) -> None:
     path = RESULTS_DIR / filename
+    # keep a local summary so the important results are available even without wandb
     with path.open("w", encoding="utf-8") as handle:
         json.dump(payload, handle, indent=2)
 
@@ -364,9 +383,11 @@ def main() -> None:
     )
 
     print("=== Part 3: MaskablePPO with PPO hyperparameters ===")
+    # first check how far masking alone gets us when we reuse the best PPO setup from part 2
     masked_ppo_base = run_multi_seed_experiment(best_ppo_params, stage="part3_masked_base")
 
     print("\n=== Part 3: Additional MaskablePPO tuning ===")
+    # then try a few extra values that may work better specifically for the masked version
     best_masked_params, masked_tuning = tune_hyperparameters(best_ppo_params, MASKED_PPO_GRID, "part3_tuning_maskedppo")
     masked_ppo_tuned = run_multi_seed_experiment(best_masked_params, stage="part3_masked_tuned")
 
@@ -381,6 +402,7 @@ def main() -> None:
         tuned_ppo_reward = tuned_ppo_summary.get("final_mean_reward")
         tuned_ppo_std = tuned_ppo_summary.get("final_std_reward", 0.0)
         if tuned_ppo_reward is not None:
+            # part 2 only gives the final PPO summary here, so draw it as a flat reference line
             comparison_curves["PPO tuned (final)"] = [
                 {"timesteps": 0, "mean_true_reward": tuned_ppo_reward, "std_true_reward": tuned_ppo_std},
                 {"timesteps": EXPERIMENT_CONFIG["total_timesteps"], "mean_true_reward": tuned_ppo_reward, "std_true_reward": tuned_ppo_std},
