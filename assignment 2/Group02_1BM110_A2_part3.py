@@ -27,7 +27,7 @@ from knapsack_env import BoundedKnapsackEnv
 
 # This is the directory setup
 # here we define the directories (which are liek folders) that are used to store logs, figures, and experiment results.
-# Creating these directories at the beginning avoids errors later if the
+# Creatin these directories at the beginning avoids errors later if the
 # script tries to save something that doesn't have a directory yet.
 
 PROJECT_ROOT = Path(__file__).resolve().parent
