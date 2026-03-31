@@ -2,10 +2,20 @@
 Assignment 2 - Part 3
 
 - Train MaskablePPO on BoundedKnapsackEnv with invalid action masking
-- Reuse tuned PPO hyperparameters from Part 2 if available
+- Reuse tuned PPO hyperparameters from Part 2
 - Tune additional MaskablePPO hyperparameters
 - Compare masked PPO against tuned PPO
 - Log metrics, tables, and figures to W&B
+
+To view the results online, go to:
+
+https://wandb.ai/Group02_1BM110/assignment-2-bounded-knapsack/
+
+For change history: 
+
+https://github.com/sadra-hub/1BM110-dataDrivenAI/commits/main/assignment%202/Group02_1BM110_A2_part2.py
+
+Author: Group 02
 """
 
 import json

@@ -5,6 +5,16 @@ Assignment 2 - Part 2
 - Aggregate results across 3 seeds
 - Tune 4 hyperparameters manually with 3 candidate values each
 - Log metrics, tables, and figures to W&B
+
+To view the results online, go to:
+
+https://wandb.ai/Group02_1BM110/assignment-2-bounded-knapsack/
+
+For change history: 
+
+https://github.com/sadra-hub/1BM110-dataDrivenAI/commits/main/assignment%202/Group02_1BM110_A2_part2.py
+
+Author: Group 02
 """
 
 import json
